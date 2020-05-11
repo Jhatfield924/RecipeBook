@@ -1,24 +1,55 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Ingredient } from 'shared/ingredient.model';
+import { Component, ViewChild } from '@angular/core';
+import { Ingredient } from 'src/app/shared/ingredient.model';
 import { ShoppingListservice } from '../shopping-list.service';
+import { NgForm } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-shopping-list-edit',
   templateUrl: './shopping-list-edit.component.html',
   styleUrls: ['./shopping-list-edit.component.css'],
 })
-export class ShoppingListEditComponent implements OnInit {
-  @ViewChild('nameInput', { static: false }) nameInputRef: ElementRef;
-  @ViewChild('amountInput', { static: false }) amountInputRef: ElementRef;
+export class ShoppingListEditComponent {
+  @ViewChild('f') slForm: NgForm;
+
+  ingredients = this.slService.ingredientsChanged;
+  editMode = false;
+  editedItemIndex: number;
+  editedItem: Ingredient;
 
   constructor(private slService: ShoppingListservice) {}
 
-  ngOnInit(): void {}
+  // Figure out how to async button to dom, watch videos of people async piping from scratch
 
-  onAddItem() {
-    const ingName = this.nameInputRef.nativeElement.value;
-    const ingAmount = this.amountInputRef.nativeElement.value;
-    const newIngredient = new Ingredient(ingName, ingAmount);
-    this.slService.addIngredient(newIngredient);
+  onAddItem(form: NgForm) {
+    const value = form.value;
+    const newIngredient = new Ingredient(value.name, value.amount);
+    if (this.editMode) {
+      this.slService.updateIngredient(this.editedItemIndex, newIngredient);
+    } else {
+      this.slService.addIngredient(newIngredient);
+    }
+    this.editMode = false;
+    form.reset();
+  }
+
+  editIngredients(index: number) {
+    this.editedItemIndex = index;
+    this.editMode = true;
+    this.editedItem = this.slService.getIngredient(index);
+    this.slForm.setValue({
+      name: this.editedItem.name,
+      amount: this.editedItem.amount,
+    });
+  }
+
+  onDelete() {
+    this.slService.deleteIngredient(this.editedItemIndex);
+    this.onClear();
+  }
+
+  onClear() {
+    this.slForm.reset();
+    this.editMode = false;
   }
 }

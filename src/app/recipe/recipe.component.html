@@ -1,0 +1,17 @@
+<div class="row">
+  <div class="col-md-5">
+    <app-recipe-list></app-recipe-list>
+  </div>
+  <div class="col-md-7">
+    <ng-container *ngIf="!(creationMode | async)">
+      <app-recipe-detail
+        *ngIf="!(editMode | async)"
+        [recipe]="currentRecipe | async"
+      ></app-recipe-detail>
+      <app-recipe-edit *ngIf="editMode | async"> </app-recipe-edit>
+    </ng-container>
+    <ng-container *ngIf="creationMode | async">
+      <app-recipe-edit></app-recipe-edit>
+    </ng-container>
+  </div>
+</div>

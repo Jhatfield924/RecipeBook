@@ -1,37 +1,68 @@
 <div class="row">
   <div class="col">
-    <form action="" method="">
+    <form (ngSubmit)="onAddItem(f)" #f="ngForm">
       <div class="row">
         <div class="col-sm-5 form-group">
           <label for="name">Name</label>
           <input
             type="text"
-            name=""
+            name="name"
             id="name"
             class="form-control"
-            #nameInput
+            ngModel
+            required
           />
         </div>
         <div class="col-sm-2 form-group">
           <label for="amount">Amount</label>
           <input
-            type="text"
-            name=""
+            type="number"
+            name="amount"
             id="amount"
             class="form-control"
-            #amountInput
+            ngModel
+            required
+            [pattern]="'^[1-9]+[0-9]*$'"
           />
         </div>
       </div>
       <div class="row">
         <div class="col">
-          <button class="btn btn-success" type="submit" (click)="onAddItem()">
-            Add
+          <button
+            class="btn btn-success"
+            (click)="onAddItem(f)"
+            [disabled]="!f.valid"
+          >
+            {{ editMode ? "Update" : "Add" }}
           </button>
-          <button class="btn btn-danger" type="button">Delete</button>
-          <button class="btn btn-primary" type="button">Clear</button>
+          <button
+            class="btn btn-danger"
+            type="button"
+            (click)="onDelete()"
+            *ngIf="editMode"
+          >
+            Delete
+          </button>
+          <button class="btn btn-primary" type="button" (click)="onClear()">
+            Clear
+          </button>
         </div>
       </div>
     </form>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <hr />
+    <ul class="list-group">
+      <a
+        style="cursor: pointer;"
+        class="nav-link list-group-item"
+        *ngFor="let ingredient of ingredients | async; let i = index"
+        (click)="editIngredients(i)"
+      >
+        {{ ingredient.name }} ({{ ingredient.amount }})
+      </a>
+    </ul>
   </div>
 </div>

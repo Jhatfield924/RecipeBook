@@ -1,0 +1,21 @@
+<ng-container *ngIf="recipe">
+  <a
+    style="cursor: pointer;"
+    class="list-group-item clearfix"
+    [class.selected]="index === (selected | async)"
+    (click)="onNavigate(index)"
+  >
+    <div class="float-left">
+      <h4 class="list-group-item-heading d-inline-block">
+        {{ recipe.name }}
+      </h4>
+      <p class="list-group-item-text">{{ recipe.description }}</p>
+    </div>
+    <img
+      [src]="recipe.imagePath"
+      alt="{{ recipe.name }}"
+      class="img-fluid float-right"
+      style="max-height: 50px;"
+    />
+  </a>
+</ng-container>
